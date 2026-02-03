@@ -1,0 +1,19 @@
+🚦 As Faixas de Status
+
+Os códigos são divididos em 5 famílias baseadas no primeiro dígito:
+2xx	- Sucesso
+3xx	- Redirecionamento
+4xx	- Erro do Cliente
+5xx	- Erro do Servidor
+
+201 (Created): "Eu recebi seus dados e criei um novo registro no banco com um ID único". É o padrão ouro para rotas de POST.
+
+500 (Internal Server Error): "deu ruim" genérico. Usamos no catch para avisar ao frontend: "Olha, tentei salvar, mas o banco de dados caiu ou houve um erro de lógica aqui no Node".
+
+400 (Bad Request): Se o usuário tentar criar uma tarefa sem título.
+
+404 (Not Found): Se o usuário tentar deletar uma tarefa que não existe.
+
+204 (No Content): Muito usado após um DELETE com sucesso, quando você não precisa retornar nenhum dado, apenas confirmar que sumiu.
+
+

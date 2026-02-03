@@ -1,0 +1,53 @@
+<div class="pomo-container">
+  <h1>Pomo Chrono</h1>
+
+  <div class="timer-display">
+    {{ formatarTempo() }}
+  </div>
+
+  <div class="controls">
+    <button (click)="iniciarTimer()" [disabled]="estaRodando">Iniciar</button>
+    <button (click)="pausarTimer()" [disabled]="!estaRodando">Pausar</button>
+    <button (click)="resetarTimer()">Resetar</button>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="(tempoRestante / tempoPadrao) * 100"></div>
+  </div>
+
+  <div class="form-container">
+    <h3>Nova Tarefa</h3>
+    <input [(ngModel)]="novaTarefa.title" placeholder="Título da tarefa" type="text">
+    <textarea [(ngModel)]="novaTarefa.description" placeholder="Descrição"></textarea>
+    <input [(ngModel)]="novaTarefa.total_cycles_required" type="number" min="1">
+    <button (click)="salvarTarefa()">Cadastrar Tarefa</button>
+  </div>
+
+  <div class="task-section">
+    <h2>Minhas Tarefas</h2>
+
+    <div class="task-list">
+      <div *ngFor="let task of listaDeTarefas"
+        class="task-card"
+        [class.active-card]="tarefaAtiva?.id === task.id"
+        [class.task-done]="task.status === 'done'">
+
+      <div class="task-header">
+        <h3 [style.text-decoration]="task.status === 'done' ? 'line-through' : 'none'">
+          {{ task.title }}
+        </h3>
+        </div>
+
+      <div class="task-status">
+        Ciclos: {{ task.completed_cycles }} / {{ task.total_cycles_required }}
+        <span [class]="'status-' + task.status"> - {{ task.status.toUpperCase() }}</span>
+      </div>
+    </div>
+    </div>
+
+    <div *ngIf="listaDeTarefas.length === 0">
+      <p>Nenhuma tarefa encontrada. Crie uma via API para testar!</p>
+    </div>
+  </div>
+
+
+</div>

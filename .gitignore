@@ -1,0 +1,45 @@
+# FRONTEND (Angular)
+**/dist/
+**/out-tsc/
+**/tmp/
+**/coverage/
+**/.angular/
+**/.ng/
+**/*.tsbuildinfo
+
+
+# DEPENDENCIES
+**/node_modules/
+**/package-lock.json
+**/yarn.lock
+
+
+# BACKEND (Node.js / Express)
+
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+
+# ENVIRONMENT FILES
+
+**/.env
+**/.env.*
+
+
+# DATABASE
+
+**/*.sql
+**/*.dump
+**/*.bak
+**/db-data/
+**/data/
+
+
+# IDE / OS
+
+**/.vscode/
+**/.idea/
+**/.DS_Store
+.gitt
+
