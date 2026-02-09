@@ -24,4 +24,7 @@ export class TaskService {
   incrementarCiclo(id: number): Observable<Task> {
     return this.http.patch<Task>(`${this.apiUrl}/${id}/increment`, {});
   }
+  updateTask(id: number, task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
+  }
 }

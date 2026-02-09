@@ -71,14 +71,14 @@ app.patch('/tasks/:id/increment', async (req, res) => {
     const { id } = req.params;
     
     const query = `
-      UPDATE tasks 
-      SET 
+      UPDATE tasks
+      SET
         completed_cycles = completed_cycles + 1,
-        status = CASE 
+        status = CASE
           WHEN completed_cycles + 1 >= total_cycles_required THEN 'done'
           ELSE 'doing'
         END
-      WHERE id = $1 
+      WHERE id = $1 AND status != 'done' AND completed_cycles < total_cycles_required
       RETURNING *`;
 
     const result = await pool.query(query, [id]);
@@ -93,3 +93,23 @@ app.patch('/tasks/:id/increment', async (req, res) => {
   }
 });
 
+app.put('/tasks/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description, total_cycles_required } = req.body;
+
+        const updateTask = await pool.query(
+            "UPDATE tasks SET title = $1, description = $2, total_cycles_required = $3 WHERE id = $4 RETURNING *",
+            [title, description, total_cycles_required, id]
+        );
+
+        if (updateTask.rowCount === 0) {
+            return res.status(404).json({ error: "Tarefa não encontrada" });
+        }
+
+        res.json(updateTask.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Erro interno no servidor" });
+    }
+});

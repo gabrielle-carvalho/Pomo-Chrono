@@ -1,0 +1,30 @@
+{
+  "name": "pomo-chrono",
+  "version": "1.0.0",
+  "description": "```cd backend npm init -y npm install express cors dotenv pg  # pg é para o PostgreSQL, que você já conhece npm install -D nodemon             # Para o servidor reiniciar sozinho ao salvar ´´´",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielle-carvalho/Pomo-Chrono.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gabrielle-carvalho/Pomo-Chrono/issues"
+  },
+  "homepage": "https://github.com/gabrielle-carvalho/Pomo-Chrono#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "pg": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

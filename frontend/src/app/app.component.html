@@ -1,53 +1,124 @@
 <div class="pomo-container">
-  <h1>Pomo Chrono</h1>
+  <h1>⏰ Pomo Chrono 🍅</h1>
 
-  <div class="timer-display">
-    {{ formatarTempo() }}
+  <div *ngIf="!esquemaSelecionado" class="selection-screen">
+    <h2>Escolha seu esquema de tempo:</h2>
+    <div class="options-grid">
+      <button *ngFor="let opcao of opcoesEsquema"
+              (click)="selecionarEsquema(opcao.valor)"
+              class="btn-option">
+        {{ opcao.nome }}
+      </button>
+    </div>
   </div>
 
-  <div class="controls">
-    <button (click)="iniciarTimer()" [disabled]="estaRodando">Iniciar</button>
-    <button (click)="pausarTimer()" [disabled]="!estaRodando">Pausar</button>
-    <button (click)="resetarTimer()">Resetar</button>
-  </div>
-  <div class="progress-container">
-    <div class="progress-bar" [style.width.%]="(tempoRestante / tempoPadrao) * 100"></div>
-  </div>
+  <div *ngIf="esquemaSelecionado">
+    <button (click)="voltarParaSelecao()" class="btn-back">← Alterar Tempo</button>
 
-  <div class="form-container">
-    <h3>Nova Tarefa</h3>
-    <input [(ngModel)]="novaTarefa.title" placeholder="Título da tarefa" type="text">
-    <textarea [(ngModel)]="novaTarefa.description" placeholder="Descrição"></textarea>
-    <input [(ngModel)]="novaTarefa.total_cycles_required" type="number" min="1">
-    <button (click)="salvarTarefa()">Cadastrar Tarefa</button>
-  </div>
+    <div class="status-fase" [style.color]="estaEmDescanso ? '#2ecc71' : '#e74c3c'">
+      <h2>{{ estaEmDescanso ? '☕ Hora de descansar' : '🚀 Tempo de focar' }}</h2>
+    </div>
 
-  <div class="task-section">
-    <h2>Minhas Tarefas</h2>
+    <div class="timer-display">
+      {{ formatarTempo() }}
+    </div>
 
-    <div class="task-list">
-      <div *ngFor="let task of listaDeTarefas"
-        class="task-card"
-        [class.active-card]="tarefaAtiva?.id === task.id"
-        [class.task-done]="task.status === 'done'">
+    <div class="controls">
+      <button (click)="iniciarTimer()" [disabled]="estaRodando">Iniciar</button>
+      <button (click)="pausarTimer()" [disabled]="!estaRodando">Pausar</button>
+      <button (click)="resetarTimer()">Resetar</button>
+    </div>
 
-      <div class="task-header">
-        <h3 [style.text-decoration]="task.status === 'done' ? 'line-through' : 'none'">
-          {{ task.title }}
-        </h3>
+    <div class="progress-container">
+      <div class="progress-bar" [style.width.%]="(tempoRestante / tempoPadrao) * 100"></div>
+    </div>
+
+    <div class="form-container" *ngIf="!tarefaEmEdicao">
+      <h3>Nova Tarefa</h3>
+      <input [(ngModel)]="novaTarefa.title" placeholder="Título da tarefa" type="text">
+      <textarea [(ngModel)]="novaTarefa.description" placeholder="Descrição"></textarea>
+      <div class="input-group">
+        <label>Ciclos necessários:</label>
+        <input [(ngModel)]="novaTarefa.total_cycles_required" type="number" min="1">
+      </div>
+      <button (click)="salvarTarefa()">Cadastrar Tarefa</button>
+    </div>
+
+    <div class="task-section">
+      <h2>Minhas Tarefas</h2>
+
+      <div class="task-list">
+        <div *ngFor="let task of listaDeTarefas"
+          class="task-card"
+          [class.active-card]="tarefaAtiva?.id === task.id"
+          [class.task-done]="task.status === 'done'">
+
+          <div class="task-content">
+            <div class="task-info">
+              <h3 [style.text-decoration]="task.status === 'done' ? 'line-through' : 'none'">
+                {{ task.title }}
+              </h3>
+              <p class="task-description"
+                *ngIf="task.description"
+                style="display: block; color: #666; font-size: 0.9em; margin-top: 5px; white-space: pre-wrap;">
+                {{ task.description }}
+              </p>
+            </div>
+
+            <div class="task-status">
+              <span>Ciclos: {{ task.completed_cycles }} / {{ task.total_cycles_required }}</span>
+              <span [class]="'status-badge status-' + task.status"> Status:
+                {{ task.status.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+
+          <div class="task-actions">
+            <button class="btn-select" (click)="selecionarTarefa(task)" [disabled]="task.status === 'done'">
+              Selecionar
+            </button>
+            <button class="btn-edit" (click)="prepararEdicao(task)">
+              Editar
+            </button>
+            <button class="btn-delete" (click)="excluirTarefa(task.id)">
+              Excluir
+            </button>
+          </div>
         </div>
+      </div>
 
-      <div class="task-status">
-        Ciclos: {{ task.completed_cycles }} / {{ task.total_cycles_required }}
-        <span [class]="'status-' + task.status"> - {{ task.status.toUpperCase() }}</span>
+      <div *ngIf="listaDeTarefas.length === 0">
+        <p>Nenhuma tarefa encontrada. Comece criando uma acima!</p>
       </div>
     </div>
-    </div>
-
-    <div *ngIf="listaDeTarefas.length === 0">
-      <p>Nenhuma tarefa encontrada. Crie uma via API para testar!</p>
-    </div>
   </div>
 
+  <div class="edit-overlay" *ngIf="tarefaEmEdicao">
+    <div class="edit-modal">
+      <h3>Editar Tarefa</h3>
 
+      <div class="modal-body">
+        <div class="input-group">
+          <label for="edit-title">Título da Tarefa:</label>
+          <input id="edit-title" [(ngModel)]="tarefaEmEdicao.title" placeholder="Ex: Estudar Angular">
+        </div>
+
+        <div class="input-group">
+          <label for="edit-desc">Descrição:</label>
+          <textarea id="edit-desc" [(ngModel)]="tarefaEmEdicao.description" placeholder="Detalhes da tarefa..."></textarea>
+        </div>
+
+        <div class="input-group">
+          <label for="edit-cycles">Total de Ciclos (Pomodoros):</label>
+          <input id="edit-cycles" [(ngModel)]="tarefaEmEdicao.total_cycles_required" type="number" min="1">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-save" (click)="salvarEdicao()">Salvar Alterações</button>
+        <button class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
+
